@@ -1,0 +1,31 @@
+soccer <-read.csv(file.choose(), header = T)
+str(soccer)
+View(soccer)
+soc <-soccer[c(5,7,8,9,15,19,20,22,24,27,28)]
+str(soc)
+View(soc)
+
+set.seed(123)
+
+
+index <- sort(sample(nrow(soc), nrow(soc)*0.8)) #80-20 split
+
+trainlogs <- soc[index,]
+testlogs <- soc[-index,]
+
+summary(trainlogs$overall_rating)
+summary(testlogs$overall_rating)
+summary(soccer$overall_rating)
+
+
+ts <- lm(overall_rating~., data = trainlogs)
+options(scipen = 999) #get rid of scientific nottation
+summary(ts)
+
+pred <- predict(ts, newdata = testlogs)
+View(pred)
+
+df <- data.frame("Actual" = testlogs$overall_rating,
+                 "Predicted" = pred,
+                 "Residual" = testlogs$overall_rating - pred)
+View(df)
